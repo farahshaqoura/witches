@@ -37,14 +37,11 @@
     </div>
 </template>
 
-<script>
+<script setup>
 definePageMeta({
     layout: 'basic',
 })
-
-export default {
-    data: () => ({
-        books: [
+const books =  [
             {
                 title: 'Satan and the Scots: The Devil in Post-Reformation, c1560-1700',
                 author: 'Michelle D.Brock (Farnham: Ashgate, 2016)',
@@ -123,12 +120,7 @@ export default {
                 link: 'https://www.bbc.co.uk/programmes/p0bvhk3w',
                 name: 'Link to this work on the BBC website',
             },
-        ],
-    }),
-    methods: {},
-    computed: {},
-    mounted: function () {},
-}
+        ]
 </script>
 
 <style></style>

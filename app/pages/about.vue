@@ -80,7 +80,7 @@
                 </p>
             </div>
             <div class="image">
-                <img src="~/public/images/data-science.png" />
+                <img src="@public/images/data-science.png" />
                 <p class="text-xs text-center">
                     Data Science for Design MSc students with their project.
                     CC-BY-SA 4.0
@@ -124,7 +124,7 @@
                 </p>
             </div>
             <div class="image" style="width: calc(35% - 20px)">
-                <img src="~/public/images/emma.png" />
+                <img src="@public/images/emma.png" />
                 <p class="text-xs text-center">
                     Emma Carroll locating the accused witches residencies.
                     CC-BY-SA 4.0
@@ -147,7 +147,7 @@
                 </p>
             </div>
             <div class="image" style="width: calc(40% - 20px)">
-                <img src="~/public/images/emma-map.png" />
+                <img src="@public/images/emma-map.png" />
                 <p class="text-xs text-center">
                     Emma Carroll exploring collections at the National Library
                     of Scotland. CC-BY-SA 4.0
@@ -232,7 +232,7 @@
                 </p>
             </div>
             <div class="image" style="width: calc(40% - 20px)">
-                <img src="~/public/images/Maggie.png" />
+                <img src="@public/images/Maggie.png" />
                 <p class="text-xs text-center">
                     Maggie Lin at the University of Edinburgh's Gender Ed 5th
                     anniversary event on 29 May 2023. CC-BY-SA 4.0
@@ -306,7 +306,7 @@
                 </ul>
             </div>
             <div class="image">
-                <img src="~/public/images/josep.png" />
+                <img src="@public/images/josep.png" />
                 <p class="text-xs text-center">
                     Josep Garcia-Reyero working on the website. CC-BY-SA 4.0
                 </p>
@@ -348,7 +348,7 @@
                 </p>
             </div>
             <div class="image" style="width: calc(35% - 20px)">
-                <img src="~/public/images/claire.png" />
+                <img src="@public/images/claire.png" />
                 <p class="text-xs text-center">
                     Claire Panella developing a Data Quality Assurance process.
                     CC-BY-SA 4.0
@@ -402,7 +402,7 @@
                 </p>
             </div>
             <div class="image">
-                <img src="~/public/images/ruby-julian.png" />
+                <img src="@public/images/ruby-julian.png" />
                 <p class="text-xs text-center">
                     Ruby Imrie with Professor Julian Goodare. CC-BY-SA 4.0
                 </p>
@@ -755,16 +755,7 @@
 </template>
 
 <script>
-definePageMeta({
-    layout: 'basic',
-})
 
-export default {
-    data: () => ({}),
-    methods: {},
-    computed: {},
-    mounted: function () {},
-}
 </script>
 
 <style scoped>
