@@ -7,14 +7,15 @@
 </template>
 
 <script>
-import MainNavBar from '~/components/MainNavBar.vue'
-import CookieBanner from '~/components/CookieBanner.vue'
-export default {
-    components: {
-        MainNavBar,
-        CookieBanner,
-    },
-}
+// import MainNavBar from '~/components/MainNavBar.vue'
+// import  from '~/components/CookieBanner.vue'
+// export default {
+//     components: {
+//         MainNavBar,
+//         CookieBanner,
+//     },
+// }
+//NO NEED TO IMPORT COMPONENTS  THEY ARE AUTOMATICALLY IMPORTED ALSO THE MainNavBar and CookieBanner components are in the components folder so they will be automatically imported 
 </script>
 
 <style>

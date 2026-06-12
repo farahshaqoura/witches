@@ -6,13 +6,14 @@
 </template>
 
 <script>
-import MainNavBar from '~/components/MainNavBar.vue'
+// import MainNavBar from '~/components/MainNavBar.vue'
 
-export default {
-    components: {
-        MainNavBar,
-    },
-}
+// export default {
+//     components: {
+//         MainNavBar,
+//     },
+// }
+//NO NEED TO IMPORT COMPONENTS  THEY ARE AUTOMATICALLY IMPORTED ALSO THE MainNavBar component is in the components folder so it will be automatically imported
 </script>
 
 <style>
