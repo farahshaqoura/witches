@@ -15,11 +15,11 @@
 
 <script setup>
 import Swal from 'sweetalert2'
-import { SPARQLQueryDispatcher } from '~/assets/js/SPARQLQueryDispatcher'
-import APIDataHandler from '~/assets/js/APIDataHandler'
-import FilteringMethods from '~/assets/js/FilteringMethods'
 import json from '../big-query-output.json'
-import filterDescriptions from '../public/filterDescriptions.json'
+import { SPARQLQueryDispatcher } from '@/assets/js/SPARQLQueryDispatcher'
+import APIDataHandler from '@/assets/js/APIDataHandler'
+import FilteringMethods from '@/assets/js/FilteringMethods'
+import filterDescriptions from '@public/filterDescriptions.json'
 
 definePageMeta({
     layout: 'default',
@@ -27,10 +27,9 @@ definePageMeta({
 
 
 const loading = ref(true)
-// const wikiPages = ref([])
 const originalMarkers = ref([])
 
-const sparqlUrl = 'https://query.wikidata.org/sparql' // plain const — never mutated
+const sparqlUrl = 'https://query.wikidata.org/sparql' 
  
 const pageInfo = ref({
     title: 'Witchcraft Prosecutions In Time and Place',

@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import path from 'path'
 export default defineNuxtConfig({
     compatibilityDate: '2026-06-12',
     devtools: { enabled: false },
@@ -10,6 +11,9 @@ export default defineNuxtConfig({
                     : 'https://witches.is.ed.ac.uk',
             supportEmail: 'ltw-apps-dev@ed.ac.uk',
         },
+    },
+    alias: {
+       '@public': path.resolve(__dirname, './public')
     },
     app: {
         head: {
