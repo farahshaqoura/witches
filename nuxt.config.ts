@@ -13,7 +13,7 @@ export default defineNuxtConfig({
         },
     },
     alias: {
-       '@public': path.resolve(__dirname, './public')
+        '@public': path.resolve(__dirname, './public'),
     },
     app: {
         head: {

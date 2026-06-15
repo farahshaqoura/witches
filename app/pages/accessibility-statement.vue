@@ -178,7 +178,7 @@
 definePageMeta({
     layout: 'default',
 })
-const supportEmail =useRuntimeConfig().public.supportEmail;
+const supportEmail = useRuntimeConfig().public.supportEmail
 </script>
 
 <style></style>

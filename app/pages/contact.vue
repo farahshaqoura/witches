@@ -13,14 +13,11 @@
             webkitallowfullscreen
             mozallowfullscreen
             msallowfullscreen
-              
         >
         </iframe>
     </div>
 </template>
 
-<script>
-
-</script>
+<script></script>
 
 <style></style>

@@ -289,9 +289,7 @@
                                     }"
                                     class="block font-sans text-gray-500 text-xs underline hover:text-gray-800 ml-2"
                                 >
-                                    {{
-                                        getGlossaryLabel(propertyItem.label)
-                                    }}
+                                    {{ getGlossaryLabel(propertyItem.label) }}
                                     Glossary
                                 </NuxtLink>
                             </div>

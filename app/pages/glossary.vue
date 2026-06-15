@@ -54,19 +54,18 @@ definePageMeta({
 import glossaryJSON from '@public/glossary.json'
 const route = useRoute()
 
-const sortMode=ref('letters');
-const  glossary= glossaryJSON;
+const sortMode = ref('letters')
+const glossary = glossaryJSON
 const initialCategory = ref(null)
 
-function setSortMode(mode){
-    sortMode.value=mode
+function setSortMode(mode) {
+    sortMode.value = mode
 }
-onMounted(()=>{
-   const queryCategory = route.query.category || null 
-     if (queryCategory) {
-           sortMode.value ='category'
-           initialCategory.value = queryCategory 
-        }
+onMounted(() => {
+    const queryCategory = route.query.category || null
+    if (queryCategory) {
+        sortMode.value = 'category'
+        initialCategory.value = queryCategory
+    }
 })
-
 </script>

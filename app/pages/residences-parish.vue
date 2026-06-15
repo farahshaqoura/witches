@@ -46,15 +46,15 @@ definePageMeta({
 })
 
 function showPageInfo() {
-            Swal.fire({
-                title: 'Number of Accused Witches That Resided In Each Modern Civil Parish',
-                html: '<div>This map shows the number of accused witches who resided within each civil parish. The parish boundaries displayed (source: National Records of Scotland) are from the 1930s. These boundaries are sometimes different from the parish boundaries during the period of the witchcraft trials.</div>',
-                footer: 'witches.is.ed.ac.uk',
-                confirmButtonText: 'Close',
-                type: 'info',
-                showCloseButton: true,
-            })
-        }
+    Swal.fire({
+        title: 'Number of Accused Witches That Resided In Each Modern Civil Parish',
+        html: '<div>This map shows the number of accused witches who resided within each civil parish. The parish boundaries displayed (source: National Records of Scotland) are from the 1930s. These boundaries are sometimes different from the parish boundaries during the period of the witchcraft trials.</div>',
+        footer: 'witches.is.ed.ac.uk',
+        confirmButtonText: 'Close',
+        type: 'info',
+        showCloseButton: true,
+    })
+}
 </script>
 
 <style>

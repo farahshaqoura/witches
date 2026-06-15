@@ -49,8 +49,6 @@
 definePageMeta({
     layout: 'basic',
 })
-
-
 </script>
 
 <style></style>

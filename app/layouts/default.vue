@@ -15,7 +15,7 @@
 //         CookieBanner,
 //     },
 // }
-//NO NEED TO IMPORT COMPONENTS  THEY ARE AUTOMATICALLY IMPORTED ALSO THE MainNavBar and CookieBanner components are in the components folder so they will be automatically imported 
+//NO NEED TO IMPORT COMPONENTS  THEY ARE AUTOMATICALLY IMPORTED ALSO THE MainNavBar and CookieBanner components are in the components folder so they will be automatically imported
 </script>
 
 <style>

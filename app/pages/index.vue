@@ -1,14 +1,13 @@
 <template>
     <loading-message v-if="loading" />
-    
+
     <map-component
         v-else
         :pageInfo="pageInfo"
-        :originalMarkers="originalMarkers"       
+        :originalMarkers="originalMarkers"
         :filtersGeneralInfo="filtersGeneralInfo"
         :filterProperties="filterProperties"
         iconBehaviour="changing"
-       
     >
     </map-component>
 </template>
@@ -25,12 +24,11 @@ definePageMeta({
     layout: 'default',
 })
 
-
 const loading = ref(true)
 const originalMarkers = ref([])
 
-const sparqlUrl = 'https://query.wikidata.org/sparql' 
- 
+const sparqlUrl = 'https://query.wikidata.org/sparql'
+
 const pageInfo = ref({
     title: 'Witchcraft Prosecutions In Time and Place',
     html: '<div>This map shows the geographical residence location for each accused witch in Scotland taken from the Survey of Scottish Witchcraft Database. Out of the <b class="font-bold">3212</b> accused witches whose names are known, the residence for <b class="font-bold">3142</b> witches has been located. The majority of the residences are accurately located down to the precise settlement, while others range from parish to county depending on the records surviving for each accused witch. There is a total of 821 different locations recorded in the database; all but 25 of these have been identified. The remaining unidentified place-names are currently recorded as \'County of\' on the map.</div>',
@@ -39,17 +37,17 @@ const pageInfo = ref({
     type: 'info',
     showCloseButton: true,
 })
- 
+
 const filtersToFind = [
     ['socialClass', 'changing'],
     ['occupation', 'changing'],
 ]
- 
+
 const filtersGeneralInfo = ref({
     title: 'Accused witch filters',
     filtersShowing: true,
 })
- 
+
 const filterProperties = ref({
     sex: {
         label: 'Gender',
@@ -107,7 +105,7 @@ const filterProperties = ref({
         showing: false,
     },
 })
- const icons = computed(() => {
+const icons = computed(() => {
     const { icons } = useIcons()
     return icons.value
 })
@@ -119,20 +117,19 @@ async function loadWikiEntries() {
       ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> ;  schema:name ?page_title .
       ?item rdfs:label ?LabelEN filter (lang(?LabelEN) = "en") .
     }`
-    const wikiPages =[]
- 
+    const wikiPages = []
+
     const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
-    const result = await queryDispatcher.query(sparqlQuery);
-     for (let i = 0; i < result.results.bindings.length; i++) {
-            let item = result.results.bindings[i]
-            wikiPages.push({
-                id: item.item.value,
-                pageTitle: item.page_title.value,
-            })
-           
-        }
-    
-    return wikiPages;
+    const result = await queryDispatcher.query(sparqlQuery)
+    for (let i = 0; i < result.results.bindings.length; i++) {
+        let item = result.results.bindings[i]
+        wikiPages.push({
+            id: item.item.value,
+            pageTitle: item.page_title.value,
+        })
+    }
+
+    return wikiPages
 }
 
 function hasLocalStorageExpired() {
@@ -141,20 +138,23 @@ function hasLocalStorageExpired() {
     const setupTime = localStorage.getItem('setupTime')
     return setupTime === null || now - setupTime > hours * 60 * 60 * 1000
 }
- 
+
 function loadDataFromLocalStorage() {
     originalMarkers.value = JSON.parse(localStorage.getItem('residenceMarkers'))
     const allFilters = JSON.parse(localStorage.getItem('allFilters'))
     filterProperties.value.socialClass.filters = allFilters.socialClass
     filterProperties.value.occupation.filters = allFilters.occupation
 }
- 
+
 function saveDataToLocalStorage(foundFilters) {
     localStorage.setItem('setupTime', new Date().getTime())
-    localStorage.setItem('residenceMarkers', JSON.stringify(originalMarkers.value))
+    localStorage.setItem(
+        'residenceMarkers',
+        JSON.stringify(originalMarkers.value)
+    )
     localStorage.setItem('allFilters', JSON.stringify(foundFilters))
 }
- 
+
 function setMarkersIcons() {
     const Filtering = new FilteringMethods(filterProperties.value, 'sex')
     for (let i = 0; i < originalMarkers.value.length; i++) {
@@ -164,35 +164,34 @@ function setMarkersIcons() {
     }
 }
 async function loadData() {
-  const config = useRuntimeConfig()
- 
+    const config = useRuntimeConfig()
+
     try {
         const wikiPages = await loadWikiEntries()
-      
-        let queryOutput = await $fetch('http://localhost:8181/main.php?type=accused') 
-       
-    const getData = new APIDataHandler(
-        queryOutput || json,
-        wikiPages,
-        icons,
-        null
-    )
-     let filtersFound = null;
-     let markers = null;
 
-[markers, filtersFound] =  getData.loadAccussed(
-        'residence',
-        filtersToFind
-    )
-    originalMarkers.value = markers;
-   filterProperties.value.socialClass.filters = filtersFound.socialClass
-    filterProperties.value.occupation.filters = filtersFound.occupation
-    setMarkersIcons()
-    loading.value = false
+        let queryOutput = await $fetch(
+            'http://localhost:8181/main.php?type=accused'
+        )
 
+        const getData = new APIDataHandler(
+            queryOutput || json,
+            wikiPages,
+            icons,
+            null
+        )
+        let filtersFound = null
+        let markers = null
+
+        ;[markers, filtersFound] = getData.loadAccussed(
+            'residence',
+            filtersToFind
+        )
+        originalMarkers.value = markers
+        filterProperties.value.socialClass.filters = filtersFound.socialClass
+        filterProperties.value.occupation.filters = filtersFound.occupation
+        setMarkersIcons()
+        loading.value = false
     } catch (e) {
-
-   
         Swal.fire({
             title: 'Server Error',
             html: `<div>We are unable to connect to the server to pull in map info. Please refresh the page and try again. If this error persists, please contact <a href="mailto:${config.public.supportEmail}">${config.public.supportEmail}</a></div>`,
@@ -203,19 +202,15 @@ async function loadData() {
         })
         return
     }
- 
-
- 
-   
-  
 }
- 
+
 function numberOfWitches() {
     return originalMarkers.value.reduce(
-        (total, marker) => total + marker.witches.length, 0
+        (total, marker) => total + marker.witches.length,
+        0
     )
 }
- watch(
+watch(
     originalMarkers,
     () => {
         pageInfo.value.html = `<div>This map shows the geographical residence location for each accused witch in Scotland taken from the Survey of Scottish Witchcraft Database. Out of the <b class="font-bold">3212</b> accused witches whose names are known, the residence for <b class="font-bold">${numberOfWitches()}</b> witches has been located. The majority of the residences are accurately located down to the precise settlement, while others range from parish to county depending on the records surviving for each accused witch. There is a total of 821 different locations recorded in the database; all but 25 of these have been identified. The remaining unidentified place-names are currently recorded as 'County of' on the map.</div>`
@@ -224,7 +219,6 @@ function numberOfWitches() {
 )
 
 onMounted(() => {
-
     Object.keys(filterDescriptions).forEach((key) => {
         if (filterProperties.value[key]) {
             filterProperties.value[key].description = filterDescriptions[key]
@@ -232,7 +226,6 @@ onMounted(() => {
     })
     loadData()
 })
-
 </script>
 
 <style></style>

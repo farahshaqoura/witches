@@ -150,8 +150,6 @@
 definePageMeta({
     layout: 'basic',
 })
-
-
 </script>
 
 <style scoped></style>
