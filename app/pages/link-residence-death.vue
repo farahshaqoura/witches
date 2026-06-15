@@ -38,10 +38,7 @@ definePageMeta({
     layout: 'default',
 })
 
-export default {
-    data: () => ({}),
-    methods: {
-        showPageInfo() {
+function  showPageInfo() {
             Swal.fire({
                 title: 'Linking Residence to Place of Death',
                 html: '<div>This map shows the geographical relationship between an accused witch’s place of residence and place of death. There are only 111 places of death recorded within the dataset. When selecting a coloured line, the recorded  <strong>first location</strong> is where the <strong>person died, second location</strong> is where the <strong>accused witch resided</strong> and <strong>below</strong> these places is the <strong>name</strong> of the accused witch </div>',
@@ -50,11 +47,7 @@ export default {
                 type: 'info',
                 showCloseButton: true,
             })
-        },
-    },
-    computed: {},
-    mounted: function () {},
-}
+        }
 </script>
 
 <style></style>

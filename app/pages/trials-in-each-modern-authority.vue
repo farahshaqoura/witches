@@ -44,10 +44,7 @@ definePageMeta({
     layout: 'default',
 })
 
-export default {
-    data: () => ({}),
-    methods: {
-        showPageInfo() {
+function showPageInfo() {
             Swal.fire({
                 title: 'Number of Trials Recorded in Each Modern Council Authority',
                 html: '<div>This map indicates the number of trials which took place in each local authority area in Scotland. The local authority boundaries date from 1996 (source: Ordnance Survey Boundary-Line Map). These are not the same as the counties, presbyteries and burghs that existed during the period of the witchcraft trials.</div>',
@@ -56,11 +53,7 @@ export default {
                 type: 'info',
                 showCloseButton: true,
             })
-        },
-    },
-    computed: {},
-    mounted: function () {},
-}
+        }
 </script>
 
 <style scoped>

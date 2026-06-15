@@ -45,10 +45,7 @@ definePageMeta({
     layout: 'basic',
 })
 
-export default {
-    data: () => ({}),
-    methods: {
-        showPageInfo() {
+function showPageInfo() {
             Swal.fire({
                 title: 'People Associated with the Witch Trials: Residence and Occupation',
                 html: '<div>This map shows the occupations of the people associated with the trials, where that is recorded. There are quite a few parish ministers and bailies (local magistrates in burghs), and a variety of other such occupations are recorded in smaller numbers.</div>',
@@ -57,11 +54,7 @@ export default {
                 type: 'info',
                 showCloseButton: true,
             })
-        },
-    },
-    computed: {},
-    mounted() {},
-}
+        }
 </script>
 
 <style>

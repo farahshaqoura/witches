@@ -174,19 +174,11 @@
     </main>
 </template>
 
-<script>
+<script setup>
 definePageMeta({
     layout: 'default',
 })
-
-export default {
-    data: () => ({
-        supportEmail: useRuntimeConfig().public.supportEmail,
-    }),
-    methods: {},
-    computed: {},
-    mounted: function () {},
-}
+const supportEmail =useRuntimeConfig().public.supportEmail;
 </script>
 
 <style></style>
