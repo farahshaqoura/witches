@@ -12,202 +12,193 @@
     </map-component>
 </template>
 
-<script>
+<script setup>
 import { SPARQLQueryDispatcher } from '~/assets/js/SPARQLQueryDispatcher'
 import APIDataHandler from '~/assets/js/APIDataHandler'
-import json from '../big-query-output.json'
+import queryOutput from '../../big-query-output.json'
 import FilteringMethods from '../assets/js/FilteringMethods'
-import MapComponent from '../components/MapComponent.vue'
-import LoadingMessage from '../components/LoadingMessage.vue'
 import Swal from 'sweetalert2'
 import filterDescriptions from '../public/filterDescriptions.json'
 
 definePageMeta({
     layout: 'default',
 })
-
-export default {
-    components: { MapComponent, LoadingMessage },
-    data: () => ({
-        pageInfo: {
-            title: 'Places of Detention for Accused Witches',
-            html: '<div>This map shows the different locations for accused witches place of detention. These people were imprisoned either before or after their witchcraft trial and could be <b class="font-bold">imprisoned multiple times and in different locations</b>. This dataset has records for only <b class="font-bold">560</b> instances of imprisonment for the <b class="font-bold">3212</b> named witches. Again, for most of the accused witches, the surviving documentation does not provide information about their imprisonment.</div>',
-            footer: 'witches.is.ed.ac.uk',
-            confirmButtonText: 'Close',
-            type: 'info',
-            showCloseButton: true,
-        },
-        queryOutput: json,
-        sparqlUrl: 'https://query.wikidata.org/sparql',
-        wikiPages: [],
-        loading: true,
-        originalMarkers: [],
-        filtersToFind: [
-            ['socialClass', 'changing'],
-            ['occupation', 'changing'],
-        ],
-        filtersGeneralInfo: {
-            title: 'Accused witch filters',
-            filtersShowing: true,
-        },
-        filterProperties: {
-            sex: {
-                label: 'Gender',
-                description: '',
-                filters: {
-                    male: {
-                        label: 'Male',
-                        active: true,
-                        iconUrl: '/images/witch-single-blue.png',
-                    },
-                    female: {
-                        label: 'Female',
-                        active: true,
-                        iconUrl: '/images/witch-single-orange.png',
-                    },
-                    unknown: {
-                        label: 'Unknown',
-                        active: true,
-                        iconUrl: '/images/witch-single-BW.png',
-                    },
-                },
-                showing: true,
+const pageInfo = ref({
+    title: 'Places of Detention for Accused Witches',
+    html: '<div>This map shows the different locations for accused witches place of detention. These people were imprisoned either before or after their witchcraft trial and could be <b class="font-bold">imprisoned multiple times and in different locations</b>. This dataset has records for only <b class="font-bold">560</b> instances of imprisonment for the <b class="font-bold">3212</b> named witches. Again, for most of the accused witches, the surviving documentation does not provide information about their imprisonment.</div>',
+    footer: 'witches.is.ed.ac.uk',
+    confirmButtonText: 'Close',
+    type: 'info',
+    showCloseButton: true,
+})
+const sparqlUrl = 'https://query.wikidata.org/sparql'
+const loading = ref(true)
+const originalMarkers = ref([])
+const filtersToFind = [
+    ['socialClass', 'changing'],
+    ['occupation', 'changing'],
+]
+const filtersGeneralInfo = ref({
+    title: 'Accused witch filters',
+    filtersShowing: true,
+})
+const filterProperties = ref({
+    sex: {
+        label: 'Gender',
+        description: '',
+        filters: {
+            male: {
+                label: 'Male',
+                active: true,
+                iconUrl: '/images/witch-single-blue.png',
             },
-            socialClass: {
-                label: 'Social Classification',
-                description: '',
-                descriptionShowing: false,
-                filters: {},
-                showing: false,
+            female: {
+                label: 'Female',
+                active: true,
+                iconUrl: '/images/witch-single-orange.png',
             },
-            occupation: {
-                label: 'Occupations',
-                description: '',
-                descriptionShowing: false,
-                filters: {},
-                showing: false,
-            },
-            hasWikiPage: {
-                label: 'Wikipedia Page',
-                description: '',
-                descriptionShowing: false,
-                filters: {
-                    hasWiki: {
-                        label: 'Has wiki',
-                        active: true,
-                        iconUrl: '/images/witch-single-blue.png',
-                    },
-                    noWiki: {
-                        label: 'No wiki',
-                        active: true,
-                        iconUrl: '/images/witch-single-orange.png',
-                    },
-                },
-                showing: false,
+            unknown: {
+                label: 'Unknown',
+                active: true,
+                iconUrl: '/images/witch-single-BW.png',
             },
         },
-    }),
-    computed: {
-        icons() {
-            const { icons } = useIcons()
-            return icons.value
-        },
+        showing: true,
     },
-    methods: {
-        loadWikiEntries: function () {
-            const sparqlQuery = `SELECT DISTINCT ?item ?LabelEN ?page_title
+    socialClass: {
+        label: 'Social Classification',
+        description: '',
+        descriptionShowing: false,
+        filters: {},
+        showing: false,
+    },
+    occupation: {
+        label: 'Occupations',
+        description: '',
+        descriptionShowing: false,
+        filters: {},
+        showing: false,
+    },
+    hasWikiPage: {
+        label: 'Wikipedia Page',
+        description: '',
+        descriptionShowing: false,
+        filters: {
+            hasWiki: {
+                label: 'Has wiki',
+                active: true,
+                iconUrl: '/images/witch-single-blue.png',
+            },
+            noWiki: {
+                label: 'No wiki',
+                active: true,
+                iconUrl: '/images/witch-single-orange.png',
+            },
+        },
+        showing: false,
+    },
+})
+
+const icons = computed(() => {
+    const { icons } = useIcons()
+    return icons.value
+})
+async function loadWikiEntries() {
+    try {
+        const sparqlQuery = `SELECT DISTINCT ?item ?LabelEN ?page_title
             WHERE {
               ?item wdt:P4478 ?witch .
               ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> ;  schema:name ?page_title .
               ?item rdfs:label ?LabelEN filter (lang(?LabelEN) = "en") .
             }`
 
-            const queryDispatcher = new SPARQLQueryDispatcher(this.sparqlUrl)
-            queryDispatcher.query(sparqlQuery).then((result) => {
-                for (let i = 0; i < result.results.bindings.length; i++) {
-                    let item = result.results.bindings[i]
+        const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
+        const result = queryDispatcher.query(sparqlQuery)
+        let wikiPages = []
+        for (let i = 0; i < result.results.bindings.length; i++) {
+            let item = result.results.bindings[i]
 
-                    let wikiPage = {
-                        id: item.item.value,
-                        pageTitle: item.page_title.value,
-                    }
-
-                    this.wikiPages.push(wikiPage)
-                }
-            })
-        },
-        setMarkersIcons: function () {
-            let Filtering = new FilteringMethods(this.filterProperties, 'sex')
-
-            for (let i = 0; i < this.originalMarkers.length; i++) {
-                let marker = this.originalMarkers[i]
-                ;[marker.markerIcon, marker.active] =
-                    Filtering.getMarkerStateIconDependant(marker)
-            }
-        },
-        hasLocalStorageExpired: function () {
-            let hours = 24 // Reset when storage is more than 24hours
-            let now = new Date().getTime()
-            let setupTime = localStorage.getItem('setupTime')
-
-            return (
-                setupTime === null || now - setupTime > hours * 60 * 60 * 1000
-            )
-        },
-        loadDataFromLocalStorage: function () {
-            let allFilters = JSON.parse(localStorage.getItem('allFilters'))
-            this.filterProperties.socialClass.filters = allFilters.socialClass
-            this.filterProperties.occupation.filters = allFilters.occupation
-        },
-        loadData: async function () {
-            this.loadWikiEntries()
-            const icons = this.icons
-            const config = useRuntimeConfig()
-
-            try {
-                let response = await myFetch('/main.php?type=detention')
-                this.queryOutput = response
-            } catch (e) {
-                Swal.fire({
-                    title: 'Server Error',
-                    html: `<div>We are unable to connect to the server to pull in map info. Please refresh the page and try again. If this error persists, please contact <a href="mailto:${config.public.supportEmail}">${config.public.supportEmail}</a></div>`,
-                    footer: 'witches.is.ed.ac.uk',
-                    confirmButtonText: 'Close',
-                    type: 'error',
-                    showCloseButton: true,
-                })
-
-                return
+            let wikiPage = {
+                id: item.item.value,
+                pageTitle: item.page_title.value,
             }
 
-            let getData = new APIDataHandler(
-                this.queryOutput,
-                this.wikiPages,
-                icons,
-                null
-            )
-            let filtersFound = null
+            wikiPages.push(wikiPage)
+        }
+        return wikiPages
+    } catch (e) {}
+}
 
-            ;[this.originalMarkers, filtersFound] = getData.loadAccussed(
-                'detention',
-                this.filtersToFind
-            )
-            this.filterProperties.socialClass.filters = filtersFound.socialClass
-            this.filterProperties.occupation.filters = filtersFound.occupation
+async function setMarkersIcons() {
+    let Filtering = new FilteringMethods(filterProperties.value, 'sex')
 
-            this.setMarkersIcons()
-            this.loading = false
-        },
-    },
-    mounted: function () {
-        // Load descriptions from the JSON file
-        Object.keys(filterDescriptions).forEach((key) => {
-            if (this.filterProperties[key]) {
-                this.filterProperties[key].description = filterDescriptions[key]
-            }
+    for (let i = 0; i < originalMarkers.length; i++) {
+        let marker = originalMarkers[i]
+        ;[marker.markerIcon, marker.active] =
+            Filtering.getMarkerStateIconDependant(marker)
+    }
+}
+
+async function hasLocalStorageExpired() {
+    let hours = 24 // Reset when storage is more than 24hours
+    let now = new Date().getTime()
+    let setupTime = localStorage.getItem('setupTime')
+
+    return setupTime === null || now - setupTime > hours * 60 * 60 * 1000
+}
+async function loadData() {
+    const wikiPages = loadWikiEntries()
+
+    const config = useRuntimeConfig()
+
+    try {
+        let queryOutputFromAPI = await myFetch('/main.php?type=detention')
+
+        let getData = new APIDataHandler(
+            queryOutputFromAPI || queryOutput,
+            wikiPages,
+            icons,
+            null
+        )
+        console.log(getData, 'getDatagetData')
+        let filtersFound = null
+        let markers = null
+
+        ;[markers, filtersFound] = getData.loadAccussed(
+            'detention',
+            filtersToFind
+        )
+        originalMarkers.value = markers
+        filterProperties.value.socialClass.filters = filtersFound.socialClass
+        filterProperties.value.occupation.filters = filtersFound.occupation
+
+        setMarkersIcons()
+        loading.value = false
+    } catch (e) {
+        console.error(e, 'eee')
+        Swal.fire({
+            title: 'Server Error',
+            html: `<div>We are unable to connect to the server to pull in map info. Please refresh the page and try again. If this error persists, please contact <a href="mailto:${config.public.supportEmail}">${config.public.supportEmail}</a></div>`,
+            footer: 'witches.is.ed.ac.uk',
+            confirmButtonText: 'Close',
+            type: 'error',
+            showCloseButton: true,
         })
 
-        this.loadData()
-    },
+        return
+    }
 }
+async function loadDataFromLocalStorage() {
+    let allFilters = JSON.parse(localStorage.getItem('allFilters'))
+    filterProperties.value.socialClass.filters = allFilters.socialClass
+    filterProperties.value.occupation.filters = allFilters.occupation
+}
+onMounted(() => {
+    Object.keys(filterDescriptions).forEach((key) => {
+        if (filterProperties[key]) {
+            filterProperties[key].description = filterDescriptions[key]
+        }
+    })
+    loadData()
+})
 </script>

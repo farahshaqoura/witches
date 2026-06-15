@@ -179,6 +179,7 @@ async function loadData() {
             icons,
             null
         )
+
         let filtersFound = null
         let markers = null
 
@@ -186,6 +187,7 @@ async function loadData() {
             'residence',
             filtersToFind
         )
+
         originalMarkers.value = markers
         filterProperties.value.socialClass.filters = filtersFound.socialClass
         filterProperties.value.occupation.filters = filtersFound.occupation
