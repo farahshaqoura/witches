@@ -48,7 +48,8 @@
                                                 class="h-6 px-1 flex items-center justify-center mr-2 border-2 rounded-md text-white font-semibold bg-slate-500 border-slate-700"
                                             >
                                                 <p>
-                                                    {{ filteredMarkers.length }}
+                                       
+                                                    {{ markers.length }}
                                                 </p>
                                             </div>
                                             <p class="mr-1 text-lg witchy-text">
@@ -208,7 +209,7 @@
                         :attribution="attribution"
                     ></LTileLayer>
                     <LMarker
-                        v-for="(memorial, i) in filteredMarkers"
+                        v-for="(memorial, i) in markers"
                         :key="i"
                         :lat-lng="memorial.longLat"
                     >
@@ -289,84 +290,83 @@
     </div>
 </template>
 
-<script>
-import { SPARQLQueryDispatcher } from '~/assets/js/SPARQLQueryDispatcher'
-import memIcon from '../public/images/memorial-icon-red.png'
-import poiIcon from '../public/images/memorial-icon-blue.png'
-import touristIcon from '../public/images/memorial-icon-green.png'
-import shadow from '../public/images/witch-single-shadow.png'
-import LoadingMessage from '../components/LoadingMessage.vue'
+<script setup>
+import { SPARQLQueryDispatcher } from '@/assets/js/SPARQLQueryDispatcher'
+import memIcon from '@public/images/memorial-icon-red.png'
+import poiIcon from '@public/images/memorial-icon-blue.png'
+import touristIcon from '@public/images/memorial-icon-green.png'
+import shadow from '@public/images/witch-single-shadow.png'
+import LoadingMessage from '@/components/LoadingMessage.vue'
 
 definePageMeta({
     layout: 'default',
 })
 
-export default {
-    components: { LoadingMessage },
-    data() {
-        return {
-            loading: true,
-            filtersBox: true,
-            url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-            zoom: 7,
-            center: [57.0, -4],
-            attribution:
-                'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.',
-            markers: [],
-            originalMarkers: [],
-            sparqlUrl: 'https://query.wikidata.org/sparql',
-            descriptions: {},
-            types: {},
-            memorials: [],
-            filters: {
-                poi: true,
-                memorial: true,
-                tourist: true,
-            },
-            memIcon,
-            poiIcon,
-            shadow,
-            touristIcon,
+const loading = ref(true)
+let filtersBox = true
+const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+let zoom = 7
+const originalMarkers =ref([]);
+
+let center = [57.0, -4]
+let attribution =
+    'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>.'
+let markers = ref([])
+
+let sparqlUrl = 'https://query.wikidata.org/sparql'
+let descriptions = {}
+let types = {}
+
+let filters = ref({
+    poi: true,
+    memorial: true,
+    tourist: true,
+});
+
+
+async function loadTypesDescriptions() {
+    const response = await fetch('/witch_memorials.json')
+    const data = await response.json()
+
+    descriptions = data.reduce((acc, item) => {
+        acc[item.wikidata_code] = item.description
+        return acc
+    }, {})
+    types = data.reduce((acc, item) => {
+        acc[item.wikidata_code] = item.type
+        return acc
+    }, {})
+    return {
+        descriptions,
+        types,
+    }
+}
+
+async function filteredMarkers() { 
+   markers.value =  originalMarkers.value.filter((memorial) => {
+    
+        if (memorial.type === 'memorial' && filters.value.memorial) {
+                console.log(memorial,'memorialmemorialmemorial')
+            return true
+        } else if (memorial.type === 'site of interest' && filters.value.poi) {
+            return true
+        } else if (memorial.type === 'tourist attraction' && filters.value.tourist) {
+            return true
         }
-    },
-    computed: {
-        filteredMarkers() {
-            return this.markers.filter((memorial) => {
-                if (memorial.type === 'memorial' && this.filters.memorial) {
-                    return true
-                } else if (
-                    memorial.type === 'site of interest' &&
-                    this.filters.poi
-                ) {
-                    return true
-                } else if (
-                    memorial.type === 'tourist attraction' &&
-                    this.filters.tourist
-                ) {
-                    return true
-                }
-                return false
-            })
-        },
-        iconAnchor: function () {
-            return [11, 41]
-        },
-    },
-    methods: {
-        async loadTypesDescriptions() {
-            const response = await fetch('/witch_memorials.json')
-            const data = await response.json()
-            this.descriptions = data.reduce((acc, item) => {
-                acc[item.wikidata_code] = item.description
-                return acc
-            }, {})
-            this.types = data.reduce((acc, item) => {
-                acc[item.wikidata_code] = item.type
-                return acc
-            }, {})
-        },
-        loadMemorials() {
-            const sparqlQuery = `
+        return false
+    })
+  
+
+}
+watch(filters, () => {
+  filteredMarkers()
+}, { deep: true })
+
+
+
+async function loadMemorials(descriptions, types) {
+    try {
+        const sparqlQuery = `
       SELECT DISTINCT ?item ?itemLabel ?instanceLabel ?image ?coords ?locationLabel ?address ?url
       WHERE {
           ?item wdt:P5008 wd:Q123249004 .
@@ -379,92 +379,87 @@ export default {
           SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }`
 
-            const queryDispatcher = new SPARQLQueryDispatcher(this.sparqlUrl)
-            queryDispatcher.query(sparqlQuery).then((result) => {
-                const uniqueCoords = new Set() // used to track unique coordinates
+        const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
+        const result = await queryDispatcher.query(sparqlQuery)
+        const uniqueCoords = new Set()
+        let memeorialMarker = []
+        for (let i = 0; i < result.results.bindings.length; i++) {
+            let item = result.results.bindings[i]
+            let x = (await item.hasOwnProperty('coords'))
+                ? convertPointToLongLatArray(item.coords.value)
+                : null
+            let memorialCoords = await x
+            // check if coordinates are not null and not already in the set
+            if (memorialCoords && !uniqueCoords.has(memorialCoords.join(','))) {
+                uniqueCoords.add(memorialCoords.join(','))
+                let id = item.item.value
+                let instance = item.hasOwnProperty('instanceLabel')
+                    ? item.instanceLabel.value
+                    : 'unknown'
+                let memorialLocation = item.hasOwnProperty('locationLabel')
+                    ? item.locationLabel.value
+                    : ''
+                let imageUrl = item.hasOwnProperty('image')
+                    ? item.image.value
+                    : ''
+                let streetAddress = item.hasOwnProperty('address')
+                    ? item.address.value
+                    : ''
+                let url = item.hasOwnProperty('url') ? item.url.value : ''
+                let description = descriptions[id.split('/').pop()] || ''
+                let type = types[id.split('/').pop()] || ''
 
-                for (let i = 0; i < result.results.bindings.length; i++) {
-                    let item = result.results.bindings[i]
-                    let memorialCoords = item.hasOwnProperty('coords')
-                        ? this.convertPointToLongLatArray(item.coords.value)
-                        : null
-
-                    // check if coordinates are not null and not already in the set
-                    if (
-                        memorialCoords &&
-                        !uniqueCoords.has(memorialCoords.join(','))
-                    ) {
-                        uniqueCoords.add(memorialCoords.join(','))
-
-                        let id = item.item.value
-                        let instance = item.hasOwnProperty('instanceLabel')
-                            ? item.instanceLabel.value
-                            : 'unknown'
-                        let memorialLocation = item.hasOwnProperty(
-                            'locationLabel'
-                        )
-                            ? item.locationLabel.value
-                            : ''
-                        let imageUrl = item.hasOwnProperty('image')
-                            ? item.image.value
-                            : ''
-                        let streetAddress = item.hasOwnProperty('address')
-                            ? item.address.value
-                            : ''
-                        let url = item.hasOwnProperty('url')
-                            ? item.url.value
-                            : ''
-                        let description =
-                            this.descriptions[id.split('/').pop()] || ''
-                        let type = this.types[id.split('/').pop()] || ''
-
-                        let memorial = {
-                            id: id.split('/').pop(),
-                            name: item.itemLabel.value,
-                            longLat: memorialCoords,
-                            location: memorialLocation,
-                            instance: instance,
-                            imageUrl: imageUrl,
-                            streetAddress: streetAddress,
-                            url: url,
-                            description: description,
-                            type: type,
-                        }
-
-                        this.markers.push(memorial)
-                    }
+                let memorial = {
+                    id: id.split('/').pop(),
+                    name: item.itemLabel.value,
+                    longLat: memorialCoords,
+                    location: memorialLocation,
+                    instance: instance,
+                    imageUrl: imageUrl,
+                    streetAddress: streetAddress,
+                    url: url,
+                    description: description,
+                    type: type,
                 }
 
-                this.noItems = this.markers.length
-                this.originalMarkers = JSON.parse(JSON.stringify(this.markers))
-                this.loading = false
-            })
-        },
-        convertPointToLongLatArray(pointString) {
-            pointString = pointString.substr(6)
-            pointString = pointString.slice(0, -1)
-            let pointArray = pointString.split(' ')
-            let longLatArray = [pointArray[1], pointArray[0]]
-            return longLatArray
-        },
-        removeMarkersFromMap() {
-            this.markers.forEach((marker) => {
-                this.$refs.myMap.mapObject.removeLayer(marker)
-            })
-            this.markers = []
-        },
-        toggleFiltersBox() {
-            this.filtersBox = !this.filtersBox
-        },
-    },
+                memeorialMarker.push(memorial)
+            }
+        }
+         originalMarkers.value=memeorialMarker;
+        filteredMarkers()
+       
 
-    mounted: function () {
-        //descriptions and types need loaded first
-        this.loadTypesDescriptions().then(() => {
-            this.loadMemorials()
-        })
-    },
+
+        loading.value = false
+    } catch (e) {
+        console.error(e, 'error')
+    }
 }
+//descriptions and types need loaded first
+onMounted(() => {
+    loadTypesDescriptions().then(({ descriptions, types }) => {
+        loadMemorials(descriptions, types)
+    })
+})
+const iconAnchor = computed(() => [11, 41])
+
+async function toggleFiltersBox() {
+    filtersBox = !filtersBox
+}
+
+async function convertPointToLongLatArray(pointString) {
+    pointString = pointString.substr(6)
+    pointString = pointString.slice(0, -1)
+    let pointArray = pointString.split(' ')
+    let longLatArray = [pointArray[1], pointArray[0]]
+    return longLatArray
+}
+// async function removeMarkersFromMap() {
+//     markers.forEach((marker) => {
+//         $refs.myMap.mapObject.removeLayer(marker)
+//     })
+//     markers = []
+// }
 </script>
 
 <style>

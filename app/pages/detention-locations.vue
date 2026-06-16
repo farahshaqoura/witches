@@ -113,7 +113,7 @@ async function loadWikiEntries() {
             }`
 
         const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
-        const result = queryDispatcher.query(sparqlQuery)
+        const result = await queryDispatcher.query(sparqlQuery)
         let wikiPages = []
         for (let i = 0; i < result.results.bindings.length; i++) {
             let item = result.results.bindings[i]
@@ -125,15 +125,19 @@ async function loadWikiEntries() {
 
             wikiPages.push(wikiPage)
         }
+        
         return wikiPages
-    } catch (e) {}
+    } catch (e) {
+    console.error(e)
+    }
 }
 
 async function setMarkersIcons() {
     let Filtering = new FilteringMethods(filterProperties.value, 'sex')
-
-    for (let i = 0; i < originalMarkers.length; i++) {
-        let marker = originalMarkers[i]
+    console.log(originalMarkers.value.length,'originalMarkers')
+    for (let i = 0; i < originalMarkers.value.length; i++) {
+        let marker = originalMarkers.value[i]
+        
         ;[marker.markerIcon, marker.active] =
             Filtering.getMarkerStateIconDependant(marker)
     }
@@ -147,7 +151,7 @@ async function hasLocalStorageExpired() {
     return setupTime === null || now - setupTime > hours * 60 * 60 * 1000
 }
 async function loadData() {
-    const wikiPages = loadWikiEntries()
+    const wikiPages = await loadWikiEntries()
 
     const config = useRuntimeConfig()
 
@@ -160,7 +164,7 @@ async function loadData() {
             icons,
             null
         )
-        console.log(getData, 'getDatagetData')
+       
         let filtersFound = null
         let markers = null
 
@@ -168,6 +172,8 @@ async function loadData() {
             'detention',
             filtersToFind
         )
+
+    
         originalMarkers.value = markers
         filterProperties.value.socialClass.filters = filtersFound.socialClass
         filterProperties.value.occupation.filters = filtersFound.occupation
@@ -175,7 +181,6 @@ async function loadData() {
         setMarkersIcons()
         loading.value = false
     } catch (e) {
-        console.error(e, 'eee')
         Swal.fire({
             title: 'Server Error',
             html: `<div>We are unable to connect to the server to pull in map info. Please refresh the page and try again. If this error persists, please contact <a href="mailto:${config.public.supportEmail}">${config.public.supportEmail}</a></div>`,
