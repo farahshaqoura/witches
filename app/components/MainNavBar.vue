@@ -77,17 +77,10 @@
     </div>
 </template>
 
-<script>
-import MainNavBarItem from '~/components/MainNavBarItem.vue'
+<script setup>
 
-export default {
-    components: {
-        MainNavBarItem,
-    },
-    data: function () {
-        return {
-            open: false,
-            links: [
+const open =ref(false);
+const links = [
                 {
                     name: 'Accused Witches',
                     url: '#',
@@ -285,13 +278,11 @@ export default {
                     external: true,
                     subpages: [],
                 },
-            ],
-        }
-    },
-    methods: {
-        toggle() {
-            this.open = !this.open
-        },
-    },
-}
+            ];
+function toggle() {
+            open.value =! open.value
+        }           
+    
+
+  
 </script>
