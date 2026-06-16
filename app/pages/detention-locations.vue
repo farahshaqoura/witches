@@ -125,19 +125,19 @@ async function loadWikiEntries() {
 
             wikiPages.push(wikiPage)
         }
-        
+
         return wikiPages
     } catch (e) {
-    console.error(e)
+        console.error(e)
     }
 }
 
 async function setMarkersIcons() {
     let Filtering = new FilteringMethods(filterProperties.value, 'sex')
-    console.log(originalMarkers.value.length,'originalMarkers')
+    console.log(originalMarkers.value.length, 'originalMarkers')
     for (let i = 0; i < originalMarkers.value.length; i++) {
         let marker = originalMarkers.value[i]
-        
+
         ;[marker.markerIcon, marker.active] =
             Filtering.getMarkerStateIconDependant(marker)
     }
@@ -164,7 +164,7 @@ async function loadData() {
             icons,
             null
         )
-       
+
         let filtersFound = null
         let markers = null
 
@@ -173,7 +173,6 @@ async function loadData() {
             filtersToFind
         )
 
-    
         originalMarkers.value = markers
         filterProperties.value.socialClass.filters = filtersFound.socialClass
         filterProperties.value.occupation.filters = filtersFound.occupation

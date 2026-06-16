@@ -71,20 +71,20 @@ async function loadWikiEntries() {
             }`
 
         const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
-       let result = await queryDispatcher.query(sparqlQuery);
-       let wikiPages=[];
-            for (let i = 0; i < result.results.bindings.length; i++) {
-                let item = result.results.bindings[i]
+        let result = await queryDispatcher.query(sparqlQuery)
+        let wikiPages = []
+        for (let i = 0; i < result.results.bindings.length; i++) {
+            let item = result.results.bindings[i]
 
-                let wikiPage = {
-                    id: item.item.value,
-                    pageTitle: item.page_title.value,
-                }
-
-                wikiPages.push(wikiPage)
+            let wikiPage = {
+                id: item.item.value,
+                pageTitle: item.page_title.value,
             }
-    console.log(wikiPages,'wikiPages')          
-    return wikiPages;
+
+            wikiPages.push(wikiPage)
+        }
+        console.log(wikiPages, 'wikiPages')
+        return wikiPages
     } catch (e) {
         console.error(e, 'error')
     }
@@ -110,9 +110,12 @@ function setFilters(filtersFound) {
     // Using a function in this page instead of just
     // assigning manually like in the other pages because
     // there are 6 of them.
-    console.log(filtersFound,'filtersFoundfiltersFound')
+    console.log(filtersFound, 'filtersFoundfiltersFound')
     filtersToFind.map((filterProperty) => {
-        console.log(filtersFound[filterProperty[0]],'filterPropertyfilterProperty')
+        console.log(
+            filtersFound[filterProperty[0]],
+            'filterPropertyfilterProperty'
+        )
         filterProperties.value[filterProperty[0]].filters =
             filtersFound[filterProperty[0]]
     })
@@ -129,28 +132,27 @@ async function loadData() {
     const config = useRuntimeConfig()
 
     try {
- let wikiPages = await  loadWikiEntries()
+        let wikiPages = await loadWikiEntries()
         let queryOutput = await myFetch('/main.php?type=ritual')
-    let getData = new APIDataHandler(
-        queryOutput || json,
-        wikiPages,
-        null,
-        icon
-    )
+        let getData = new APIDataHandler(
+            queryOutput || json,
+            wikiPages,
+            null,
+            icon
+        )
 
-    let filtersFound = null
-    let markers =null;
-    ;[markers, filtersFound] = getData.loadAccussed(
-        'residence',
-        filtersToFind
-    )
-    originalMarkers.value =markers;
-    setFilters(filtersFound)
-    // setMarkersIcons()
-    loading.value = false
-
+        let filtersFound = null
+        let markers = null
+        ;[markers, filtersFound] = getData.loadAccussed(
+            'residence',
+            filtersToFind
+        )
+        originalMarkers.value = markers
+        setFilters(filtersFound)
+        // setMarkersIcons()
+        loading.value = false
     } catch (e) {
-        console.error(e,'errorr')
+        console.error(e, 'errorr')
         Swal.fire({
             title: 'Server Error',
             html: `<div>We are unable to connect to the server to pull in map info. Please refresh the page and try again. If this error persists, please contact <a href="mailto:${config.public.supportEmail}">${config.public.supportEmail}</a></div>`,
@@ -170,8 +172,6 @@ function setMarkersIcons() {
         marker.markerIcon = '/images/witch-single-orange.png'
     }
 }
-
-
 </script>
 
 <style></style>

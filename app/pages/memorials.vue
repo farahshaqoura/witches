@@ -48,7 +48,6 @@
                                                 class="h-6 px-1 flex items-center justify-center mr-2 border-2 rounded-md text-white font-semibold bg-slate-500 border-slate-700"
                                             >
                                                 <p>
-                                       
                                                     {{ markers.length }}
                                                 </p>
                                             </div>
@@ -306,7 +305,7 @@ const loading = ref(true)
 let filtersBox = true
 const url = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 let zoom = 7
-const originalMarkers =ref([]);
+const originalMarkers = ref([])
 
 let center = [57.0, -4]
 let attribution =
@@ -321,8 +320,7 @@ let filters = ref({
     poi: true,
     memorial: true,
     tourist: true,
-});
-
+})
 
 async function loadTypesDescriptions() {
     const response = await fetch('/witch_memorials.json')
@@ -342,27 +340,29 @@ async function loadTypesDescriptions() {
     }
 }
 
-async function filteredMarkers() { 
-   markers.value =  originalMarkers.value.filter((memorial) => {
-    
+async function filteredMarkers() {
+    markers.value = originalMarkers.value.filter((memorial) => {
         if (memorial.type === 'memorial' && filters.value.memorial) {
-                console.log(memorial,'memorialmemorialmemorial')
+            console.log(memorial, 'memorialmemorialmemorial')
             return true
         } else if (memorial.type === 'site of interest' && filters.value.poi) {
             return true
-        } else if (memorial.type === 'tourist attraction' && filters.value.tourist) {
+        } else if (
+            memorial.type === 'tourist attraction' &&
+            filters.value.tourist
+        ) {
             return true
         }
         return false
     })
-  
-
 }
-watch(filters, () => {
-  filteredMarkers()
-}, { deep: true })
-
-
+watch(
+    filters,
+    () => {
+        filteredMarkers()
+    },
+    { deep: true }
+)
 
 async function loadMemorials(descriptions, types) {
     try {
@@ -425,10 +425,8 @@ async function loadMemorials(descriptions, types) {
                 memeorialMarker.push(memorial)
             }
         }
-         originalMarkers.value=memeorialMarker;
+        originalMarkers.value = memeorialMarker
         filteredMarkers()
-       
-
 
         loading.value = false
     } catch (e) {
