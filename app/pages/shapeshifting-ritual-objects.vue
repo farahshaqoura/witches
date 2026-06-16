@@ -13,13 +13,13 @@
 </template>
 
 <script setup>
-import { SPARQLQueryDispatcher } from '~/assets/js/SPARQLQueryDispatcher'
-import APIDataHandler from '~/assets/js/APIDataHandler'
+import { SPARQLQueryDispatcher } from '@/assets/js/SPARQLQueryDispatcher'
+import APIDataHandler from '@/assets/js/APIDataHandler'
 import json from '../big-query-output.json'
-import MapComponent from '../components/MapComponent.vue'
-import LoadingMessage from '../components/LoadingMessage.vue'
+import MapComponent from '@/components/MapComponent.vue'
+import LoadingMessage from '@/components/LoadingMessage.vue'
 import Swal from 'sweetalert2'
-import filterDescriptions from '../public/filterDescriptions.json'
+import filterDescriptions from '@public/filterDescriptions.json'
 
 definePageMeta({
     layout: 'default',
@@ -110,9 +110,10 @@ function setFilters(filtersFound) {
     // Using a function in this page instead of just
     // assigning manually like in the other pages because
     // there are 6 of them.
-
+    console.log(filtersFound,'filtersFoundfiltersFound')
     filtersToFind.map((filterProperty) => {
-        filterProperties[filterProperty[0]].filters =
+        console.log(filtersFound[filterProperty[0]],'filterPropertyfilterProperty')
+        filterProperties.value[filterProperty[0]].filters =
             filtersFound[filterProperty[0]]
     })
 }
@@ -131,7 +132,7 @@ async function loadData() {
  let wikiPages = await  loadWikiEntries()
         let queryOutput = await myFetch('/main.php?type=ritual')
     let getData = new APIDataHandler(
-        queryOutput,
+        queryOutput || json,
         wikiPages,
         null,
         icon
@@ -144,9 +145,8 @@ async function loadData() {
         filtersToFind
     )
     originalMarkers.value =markers;
-    console.log(getData,'getDatagetData')
     setFilters(filtersFound)
-    setMarkersIcons()
+    // setMarkersIcons()
     loading.value = false
 
     } catch (e) {
