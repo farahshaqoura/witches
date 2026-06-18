@@ -88,7 +88,7 @@ async function loadWikiEntries() {
 
         const queryDispatcher = new SPARQLQueryDispatcher(sparqlUrl)
         const result = await queryDispatcher.query(sparqlQuery)
-        let wikiPages =[]
+        let wikiPages = []
         for (let i = 0; i < result.results.bindings.length; i++) {
             let item = result.results.bindings[i]
 
@@ -99,7 +99,7 @@ async function loadWikiEntries() {
 
             wikiPages.push(wikiPage)
         }
-        return wikiPages;
+        return wikiPages
     } catch (e) {
         console.error(e)
     }
@@ -141,13 +141,13 @@ async function loadData() {
     const config = useRuntimeConfig()
 
     try {
-        let wikiPages = await loadWikiEntries()   
+        let wikiPages = await loadWikiEntries()
         let queryOutput = await myFetch('/main.php?type=meetings')
 
         let getData = new APIDataHandler(queryOutput, wikiPages, null, icon)
 
         let filtersFound = null
-        let markers =null;
+        let markers = null
         ;[markers, filtersFound] = getData.loadAccussed(
             'residence',
             filtersToFind

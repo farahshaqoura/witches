@@ -131,8 +131,8 @@ const attribution =
     'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>. Historical Maps Layer, 1919-1947 from the <a href="http://maps.nls.uk/projects/api/">NLS Maps API</a>'
 const zoom = 7
 const center = [55.95, -3.198888888]
-const markers = ref([])
-const originalMarkers = []
+ const markers = ref([])
+const originalMarkers = ref([])
 const iconAnchor = [11, 41]
 const shadowUrl = '/images/North-Berwick-witch-shadow.png'
 const shadowAnchor = [11, 26]
@@ -206,28 +206,28 @@ async function loadTrials() {
                 date: trialDate,
                 year: trialYear,
             }
-            console.log(trial, 'trial')
+            let markersLocal= markers.value;
 
-            // let marker = markers.find((marker) => {
-            //     return marker.location === trial.location
-            // })
+            let marker = markers.value.find((marker) => {
+                return marker.location === trial.location
+            })
 
-            // if (marker) {
-            //     marker.trials.push(trial)
-            // } else {
-            //     let marker = {
-            //         location: item.residenceLabel.value,
-            //         longLat: convertPointToLongLatArray(item.coords.value),
-            //         trials: [trial],
-            //     }
+            if (marker) {
+                marker.trials.push(trial)
+            } else {
+                let marker = {
+                    location: item.residenceLabel.value,
+                    longLat: convertPointToLongLatArray(item.coords.value),
+                    trials: [trial],
+                }
 
-            //    markers.push(marker)
-            // }
+               markersLocal.push(marker)
+            }
         }
+        markers.value=markersLocal;
 
-        // originalMarkers = JSON.parse(JSON.stringify(this.markers))
-
-        // filterDates()
+        originalMarkers.value = markers;
+ filterDates()
     } catch (e) {
         console.error(e, 'error')
     }
@@ -242,7 +242,7 @@ function filterTiles(tile) {
     url = tile.url
 }
 function filterDates() {
-    let markers = JSON.parse(JSON.stringify(this.originalMarkers))
+    let markers = originalMarkers.value
 
     markers.forEach((marker) => {
         marker.trials = marker.trials.filter(
@@ -269,10 +269,10 @@ onMounted(async () => {
     await loadTrials()
 })
 
-// const activeMarkers = computed(() => {
-//     return markers.value.filter((marker) => marker.trials.length > 0)
-// })
-// const max = computed(() => sliderYears.value.length - 1)
+const activeMarkers = computed(() => {
+    return markers.value.filter((marker) => marker.trials.length > 0)
+})
+const max = computed(() => sliderYears.value.length - 1)
 </script>
 
 <style>

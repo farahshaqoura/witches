@@ -134,12 +134,13 @@ async function loadWikiEntries() {
 
 async function setMarkersIcons() {
     let Filtering = new FilteringMethods(filterProperties.value, 'sex')
-    console.log(originalMarkers.value.length, 'originalMarkers')
+   
     for (let i = 0; i < originalMarkers.value.length; i++) {
         let marker = originalMarkers.value[i]
 
         ;[marker.markerIcon, marker.active] =
             Filtering.getMarkerStateIconDependant(marker)
+             console.log(marker.markerIcon, marker.active, 'originalMarkers')
     }
 }
 

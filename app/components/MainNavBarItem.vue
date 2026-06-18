@@ -31,25 +31,21 @@
 </template>
 
 <script setup>
-
 const props = defineProps({
-    url:String,
-    external:Boolean,
-    subpages:Array
+    url: String,
+    external: Boolean,
+    subpages: Array,
 })
-function isSubActive (url) {
-            return url === route.path || url + '/' === route.path
-        }
+function isSubActive(url) {
+    return url === route.path || url + '/' === route.path
+}
 const route = useRoute()
 
-function isSubpageActive (subpages) {
-            return subpages.some(
-                (page) =>
-                    page.url === route.path ||
-                    page.url + '/' === route.path
-            )
-        }
-
+function isSubpageActive(subpages) {
+    return subpages.some(
+        (page) => page.url === route.path || page.url + '/' === route.path
+    )
+}
 </script>
 
 <style>
