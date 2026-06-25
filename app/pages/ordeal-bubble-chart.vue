@@ -33,17 +33,6 @@
     </div>
 </template>
 
-<script>
-definePageMeta({
-    layout: 'default',
-})
-
-export default {
-    data: () => ({}),
-    methods: {},
-    computed: {},
-    mounted: function () {},
-}
-</script>
+<script></script>
 
 <style></style>

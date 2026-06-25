@@ -7,14 +7,7 @@
 </template>
 
 <script>
-import MainNavBar from '~/components/MainNavBar.vue'
-import CookieBanner from '~/components/CookieBanner.vue'
-export default {
-    components: {
-        MainNavBar,
-        CookieBanner,
-    },
-}
+
 </script>
 
 <style>

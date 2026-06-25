@@ -49,13 +49,6 @@
 definePageMeta({
     layout: 'basic',
 })
-
-export default {
-    data: () => ({}),
-    methods: {},
-    computed: {},
-    mounted: function () {},
-}
 </script>
 
 <style></style>

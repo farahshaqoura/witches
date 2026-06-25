@@ -41,23 +41,15 @@ import Swal from 'sweetalert2'
 definePageMeta({
     layout: 'basic',
 })
-
-export default {
-    data: () => ({}),
-    methods: {
-        showPageInfo() {
-            Swal.fire({
-                title: 'Types of Torture at Different Residence Locations',
-                html: '<div>This map shows the location of accused witches who are recorded to have suffered torture during their investigations. Data on this subject are far from complete, since in most cases nothing was written about torture in the trial records that form our main source. A witch’s confession would be recorded, but nothing would be said about how that confession was obtained. We have only a few scattered pieces of evidence about torture.</div>',
-                footer: 'witches.is.ed.ac.uk',
-                confirmButtonText: 'Close',
-                type: 'info',
-                showCloseButton: true,
-            })
-        },
-    },
-    computed: {},
-    mounted() {},
+function showPageInfo() {
+    Swal.fire({
+        title: 'Types of Torture at Different Residence Locations',
+        html: '<div>This map shows the location of accused witches who are recorded to have suffered torture during their investigations. Data on this subject are far from complete, since in most cases nothing was written about torture in the trial records that form our main source. A witch’s confession would be recorded, but nothing would be said about how that confession was obtained. We have only a few scattered pieces of evidence about torture.</div>',
+        footer: 'witches.is.ed.ac.uk',
+        confirmButtonText: 'Close',
+        type: 'info',
+        showCloseButton: true,
+    })
 }
 </script>
 

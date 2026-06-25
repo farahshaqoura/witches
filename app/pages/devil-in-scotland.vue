@@ -55,25 +55,17 @@
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            isLargeScreen: false,
-        }
-    },
-    methods: {
-        getScreenSize() {
-            this.isLargeScreen = window.innerWidth > 768
-        },
-    },
-    mounted() {
-        this.getScreenSize()
-        window.addEventListener('resize', this.getScreenSize)
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.getScreenSize)
-    },
+const isLargeScreen = false
+function getScreenSize() {
+    isLargeScreen = window.innerWidth > 768
 }
+onMounted(() => {
+    getScreenSize()
+    window.addEventListener('resize', this.getScreenSize)
+})
+onUnmounted(() => {
+    window.removeEventListener('resize', this.getScreenSize)
+})
 </script>
 
 <style></style>

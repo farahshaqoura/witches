@@ -77,221 +77,208 @@
     </div>
 </template>
 
-<script>
-import MainNavBarItem from '~/components/MainNavBarItem.vue'
-
-export default {
-    components: {
-        MainNavBarItem,
+<script setup>
+const open = ref(false)
+const links = [
+    {
+        name: 'Accused Witches',
+        url: '#',
+        external: false,
+        subpages: [
+            {
+                name: 'Witchcraft Prosecutions In Time and Place',
+                url: '/',
+                external: false,
+            },
+            {
+                name: 'Timeline Search',
+                url: '/timeline-search',
+                external: false,
+            },
+            {
+                name: 'Residences on ArcGIS',
+                url: '/residences-on-argis',
+                external: false,
+            },
+            {
+                name: 'Residences Within Each Parish',
+                url: '/residences-parish',
+                external: false,
+            },
+            {
+                name: 'Death Locations',
+                url: '/death-locations',
+                external: false,
+            },
+            {
+                name: 'Linking Residence to Place of Death',
+                url: '/link-residence-death',
+                external: false,
+            },
+        ],
     },
-    data: function () {
-        return {
-            open: false,
-            links: [
-                {
-                    name: 'Accused Witches',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        {
-                            name: 'Witchcraft Prosecutions In Time and Place',
-                            url: '/',
-                            external: false,
-                        },
-                        {
-                            name: 'Timeline Search',
-                            url: '/timeline-search',
-                            external: false,
-                        },
-                        {
-                            name: 'Residences on ArcGIS',
-                            url: '/residences-on-argis',
-                            external: false,
-                        },
-                        {
-                            name: 'Residences Within Each Parish',
-                            url: '/residences-parish',
-                            external: false,
-                        },
-                        {
-                            name: 'Death Locations',
-                            url: '/death-locations',
-                            external: false,
-                        },
-                        {
-                            name: 'Linking Residence to Place of Death',
-                            url: '/link-residence-death',
-                            external: false,
-                        },
-                    ],
-                },
-                {
-                    name: 'Investigations',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        {
-                            name: 'Case Characterisations',
-                            url: '/case-characterisations',
-                            external: false,
-                        },
-                        {
-                            name: 'Witches Meetings',
-                            url: '/witches-meetings',
-                            external: false,
-                        },
-                        {
-                            name: 'Shapeshifting and Ritual Objects',
-                            url: '/shapeshifting-ritual-objects',
-                            external: false,
-                        },
-                    ],
-                },
-                {
-                    name: 'Trials',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        {
-                            name: 'Named Witches',
-                            url: '/named-witches',
-                            external: false,
-                        },
-                        {
-                            name: 'Detention Locations',
-                            url: '/detention-locations',
-                            external: false,
-                        },
-                        {
-                            name: 'Trial Locations',
-                            url: '/trial-locations',
-                            external: false,
-                        },
-                        {
-                            name: 'Trials in Each Modern Authority',
-                            url: '/trials-in-each-modern-authority',
-                            external: false,
-                        },
-                        {
-                            name: 'Types of Torture at Different Residence Locations',
-                            url: '/types-torture-different-residence',
-                            external: false,
-                        },
-                        {
-                            name: 'Trial Procedures',
-                            url: '/trial-procedures',
-                            external: false,
-                        },
-                    ],
-                },
-                {
-                    name: 'People Involved',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        {
-                            name: 'People Associated with the Witch Trials: Residence and Occupation',
-                            url: '/people-associated-residence',
-                            external: false,
-                        },
-                        {
-                            name: 'A Witch-Prickers Journey',
-                            url: '/witch-pricker',
-                            external: false,
-                        },
-                    ],
-                },
-                {
-                    name: 'Extra Visualisations',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        {
-                            name: "Accused Witches' Occupations",
-                            url: '/accused-witches-occupations',
-                            external: false,
-                        },
-                        {
-                            name: 'The Story of Isobel Young',
-                            url: '/story-isobel-young',
-                            external: false,
-                        },
-                        {
-                            name: 'Ordeal Bubble Chart',
-                            url: '/ordeal-bubble-chart',
-                            external: false,
-                        },
-                        {
-                            name: 'Social Bubble Chart',
-                            url: '/social-bubble-chart',
-                            external: false,
-                        },
-                        {
-                            name: 'A Witch Tour of Edinburgh',
-                            url: '/witch-tour-edinburgh',
-                            external: false,
-                        },
-                        {
-                            name: 'The Devil in Scotland',
-                            url: '/devil-in-scotland',
-                            external: false,
-                        },
-                    ],
-                },
-                {
-                    name: 'Memorials & Sites of Interest',
-                    url: '/memorials',
-                    external: false,
-                    subpages: [],
-                },
-                {
-                    name: 'About',
-                    url: '#',
-                    external: false,
-                    subpages: [
-                        { name: 'Overview', url: '/about', external: false },
-                        {
-                            name: 'Introduction to Scottish Witchcraft',
-                            url: '/introduction',
-                            external: false,
-                        },
-                        { name: 'Glossary', url: '/glossary', external: false },
-                        {
-                            name: 'References',
-                            url: '/references',
-                            external: false,
-                        },
-                        {
-                            name: 'Resources',
-                            url: '/resources',
-                            external: false,
-                        },
-                        {
-                            name: 'Interview with Prof. Julian Goodare',
-                            url: '/interview',
-                            external: false,
-                        },
-                        {
-                            name: 'Further Reading',
-                            url: '/further-reading',
-                            external: false,
-                        },
-                        { name: 'Contact', url: '/contact', external: false },
-                    ],
-                },
-                {
-                    name: 'Blog',
-                    url: 'https://blogs.ed.ac.uk/witchcraft_visualisation/',
-                    external: true,
-                    subpages: [],
-                },
-            ],
-        }
+    {
+        name: 'Investigations',
+        url: '#',
+        external: false,
+        subpages: [
+            {
+                name: 'Case Characterisations',
+                url: '/case-characterisations',
+                external: false,
+            },
+            {
+                name: 'Witches Meetings',
+                url: '/witches-meetings',
+                external: false,
+            },
+            {
+                name: 'Shapeshifting and Ritual Objects',
+                url: '/shapeshifting-ritual-objects',
+                external: false,
+            },
+        ],
     },
-    methods: {
-        toggle() {
-            this.open = !this.open
-        },
+    {
+        name: 'Trials',
+        url: '#',
+        external: false,
+        subpages: [
+            {
+                name: 'Named Witches',
+                url: '/named-witches',
+                external: false,
+            },
+            {
+                name: 'Detention Locations',
+                url: '/detention-locations',
+                external: false,
+            },
+            {
+                name: 'Trial Locations',
+                url: '/trial-locations',
+                external: false,
+            },
+            {
+                name: 'Trials in Each Modern Authority',
+                url: '/trials-in-each-modern-authority',
+                external: false,
+            },
+            {
+                name: 'Types of Torture at Different Residence Locations',
+                url: '/types-torture-different-residence',
+                external: false,
+            },
+            {
+                name: 'Trial Procedures',
+                url: '/trial-procedures',
+                external: false,
+            },
+        ],
     },
+    {
+        name: 'People Involved',
+        url: '#',
+        external: false,
+        subpages: [
+            {
+                name: 'People Associated with the Witch Trials: Residence and Occupation',
+                url: '/people-associated-residence',
+                external: false,
+            },
+            {
+                name: 'A Witch-Prickers Journey',
+                url: '/witch-pricker',
+                external: false,
+            },
+        ],
+    },
+    {
+        name: 'Extra Visualisations',
+        url: '#',
+        external: false,
+        subpages: [
+            {
+                name: "Accused Witches' Occupations",
+                url: '/accused-witches-occupations',
+                external: false,
+            },
+            {
+                name: 'The Story of Isobel Young',
+                url: '/story-isobel-young',
+                external: false,
+            },
+            {
+                name: 'Ordeal Bubble Chart',
+                url: '/ordeal-bubble-chart',
+                external: false,
+            },
+            {
+                name: 'Social Bubble Chart',
+                url: '/social-bubble-chart',
+                external: false,
+            },
+            {
+                name: 'A Witch Tour of Edinburgh',
+                url: '/witch-tour-edinburgh',
+                external: false,
+            },
+            {
+                name: 'The Devil in Scotland',
+                url: '/devil-in-scotland',
+                external: false,
+            },
+        ],
+    },
+    {
+        name: 'Memorials & Sites of Interest',
+        url: '/memorials',
+        external: false,
+        subpages: [],
+    },
+    {
+        name: 'About',
+        url: '#',
+        external: false,
+        subpages: [
+            { name: 'Overview', url: '/about', external: false },
+            {
+                name: 'Introduction to Scottish Witchcraft',
+                url: '/introduction',
+                external: false,
+            },
+            { name: 'Glossary', url: '/glossary', external: false },
+            {
+                name: 'References',
+                url: '/references',
+                external: false,
+            },
+            {
+                name: 'Resources',
+                url: '/resources',
+                external: false,
+            },
+            {
+                name: 'Interview with Prof. Julian Goodare',
+                url: '/interview',
+                external: false,
+            },
+            {
+                name: 'Further Reading',
+                url: '/further-reading',
+                external: false,
+            },
+            { name: 'Contact', url: '/contact', external: false },
+        ],
+    },
+    {
+        name: 'Blog',
+        url: 'https://blogs.ed.ac.uk/witchcraft_visualisation/',
+        external: true,
+        subpages: [],
+    },
+]
+function toggle() {
+    open.value = !open.value
 }
 </script>

@@ -26,8 +26,9 @@
                 </h2>
                 <hr class="mb-3" />
                 <ul v-show="letterObj.expanded" class="mb-3 ml-4">
+                   
                     <li
-                        v-for="item in sortedGlossary[letterObj.letter]"
+                        v-for="item in letterObj.category"
                         :key="item.word"
                         class="mb-3"
                     >
@@ -47,71 +48,67 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        glossary: {
-            type: Array,
-            required: true,
-        },
-    },
-    data() {
-        return {
-            letters: [], // Array to track letters and their expanded states
-        }
-    },
-    computed: {
-        sortedGlossary() {
-            // object to store groups of glossary items by letter
-            let grouped = {}
+<script setup>
+const letters = ref([])
 
-            // group by the first letter of each word
-            this.glossary.forEach((item) => {
-                let letter = item.word.charAt(0).toUpperCase()
-                if (!grouped[letter]) {
-                    grouped[letter] = []
-                }
-                grouped[letter].push(item)
-            })
+const props = defineProps({
+    glossary: {
+        required: true,
+    },
+})
 
-            // within group sort into alphabetical order
-            const sortedGroups = {}
-            Object.keys(grouped)
-                .sort()
-                .forEach((key) => {
-                    sortedGroups[key] = grouped[key].sort((a, b) => {
-                        return a.word.localeCompare(b.word)
-                    })
-                })
-
-            return sortedGroups
-        },
-    },
-    mounted() {
-        // create letters array to use for expandable/collapsable sections
-        this.letters = Object.keys(this.sortedGlossary)
-            .sort()
-            .map((letter) => {
-                return { letter, expanded: false }
-            })
-    },
-    methods: {
-        toggleShowingLetter(letter) {
-            const letterObj = this.letters.find((l) => l.letter === letter)
-            if (letterObj) {
-                letterObj.expanded = !letterObj.expanded
-            }
-        },
-        expandAll() {
-            this.letters.forEach((letterObj) => {
-                letterObj.expanded = true
-            })
-        },
-        collapseAll() {
-            this.letters.forEach((letterObj) => {
-                letterObj.expanded = false
-            })
-        },
-    },
+function toggleShowingLetter(letter) {
+    const letterObj = letters.value.find((l) => l.letter === letter)
+    if (letterObj) {
+        letterObj.expanded = !letterObj.expanded
+    }
 }
+function expandAll() {
+    
+    letters.value.forEach((letterObj) => {
+        letterObj.expanded = true
+    })
+}
+function collapseAll() {
+    letters.value.forEach((letterObj) => {
+        letterObj.expanded = false
+    })
+}
+
+const sortedGlossary = computed(() => {
+    
+    // object to store groups of glossary items by letter
+    let grouped = {}
+
+    // group by the first letter of each word
+  
+    props.glossary.forEach((item) => {
+        let letter = item.word.charAt(0).toUpperCase()
+        if (!grouped[letter]) {
+            grouped[letter] = []
+        }
+        grouped[letter].push(item)
+    })
+ 
+    const sortedGroups = {}
+    Object.keys(grouped)
+        .sort()
+        .forEach((key) => {
+            sortedGroups[key] = grouped[key].sort((a, b) => {
+                return a.word.localeCompare(b.word)
+            })
+        })
+     
+    return sortedGroups
+})
+
+onMounted(() => {
+  letters.value= Object.keys(sortedGlossary.value)
+        .sort()
+        .map((letter) => {
+
+            return { letter, category:sortedGlossary.value[letter], expanded: false }
+        })
+       
+})
 </script>

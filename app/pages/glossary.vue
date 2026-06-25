@@ -47,40 +47,25 @@
     </div>
 </template>
 
-<script>
-import AlphabetGlossary from '@/components/AlphabetGlossary.vue'
-import CategoryGlossary from '@/components/CategoryGlossary.vue'
-import glossaryJSON from '../public/glossary.json'
-
+<script setup>
 definePageMeta({
     layout: 'basic',
 })
+import glossaryJSON from '@public/glossary.json'
+const route = useRoute()
 
-export default {
-    components: {
-        AlphabetGlossary,
-        CategoryGlossary,
-    },
-    data() {
-        return {
-            sortMode: 'letters', // Default sort mode
-            glossary: glossaryJSON,
-            initialCategory: null, // Store initial category from query
-        }
-    },
-    mounted() {
-        const queryCategory = this.$route.query.category || null // Access query params using this.$route
+const sortMode = ref('letters')
+const glossary = glossaryJSON
+const initialCategory = ref(null)
 
-        // If a category is passed, switch to 'category' sort mode
-        if (queryCategory) {
-            this.setSortMode('category')
-            this.initialCategory = queryCategory // Set the initial category
-        }
-    },
-    methods: {
-        setSortMode(mode) {
-            this.sortMode = mode
-        },
-    },
+function setSortMode(mode) {
+    sortMode.value = mode
 }
+onMounted(() => {
+    const queryCategory = route.query.category || null
+    if (queryCategory) {
+        sortMode.value = 'category'
+        initialCategory.value = queryCategory
+    }
+})
 </script>

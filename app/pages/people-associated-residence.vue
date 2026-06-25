@@ -45,22 +45,15 @@ definePageMeta({
     layout: 'basic',
 })
 
-export default {
-    data: () => ({}),
-    methods: {
-        showPageInfo() {
-            Swal.fire({
-                title: 'People Associated with the Witch Trials: Residence and Occupation',
-                html: '<div>This map shows the occupations of the people associated with the trials, where that is recorded. There are quite a few parish ministers and bailies (local magistrates in burghs), and a variety of other such occupations are recorded in smaller numbers.</div>',
-                footer: 'witches.is.ed.ac.uk',
-                confirmButtonText: 'Close',
-                type: 'info',
-                showCloseButton: true,
-            })
-        },
-    },
-    computed: {},
-    mounted() {},
+function showPageInfo() {
+    Swal.fire({
+        title: 'People Associated with the Witch Trials: Residence and Occupation',
+        html: '<div>This map shows the occupations of the people associated with the trials, where that is recorded. There are quite a few parish ministers and bailies (local magistrates in burghs), and a variety of other such occupations are recorded in smaller numbers.</div>',
+        footer: 'witches.is.ed.ac.uk',
+        confirmButtonText: 'Close',
+        type: 'info',
+        showCloseButton: true,
+    })
 }
 </script>
 

@@ -30,21 +30,21 @@
     </span>
 </template>
 
-<script>
-export default {
-    props: ['url', 'external', 'subpages'],
-    methods: {
-        isSubActive: function (url) {
-            return url === this.$route.path || url + '/' === this.$route.path
-        },
-        isSubpageActive: function (subpages) {
-            return subpages.some(
-                (page) =>
-                    page.url === this.$route.path ||
-                    page.url + '/' === this.$route.path
-            )
-        },
-    },
+<script setup>
+const props = defineProps({
+    url: String,
+    external: Boolean,
+    subpages: Array,
+})
+function isSubActive(url) {
+    return url === route.path || url + '/' === route.path
+}
+const route = useRoute()
+
+function isSubpageActive(subpages) {
+    return subpages.some(
+        (page) => page.url === route.path || page.url + '/' === route.path
+    )
 }
 </script>
 

@@ -45,28 +45,23 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: {
-        glossary: {
-            type: Array,
-            required: true,
-        },
-        initialCategory: {
-            type: String,
-            default: null,
-        },
+<script setup>
+const props = defineProps({
+    glossary: {
+        type: Array,
+        required: true,
     },
-    data() {
-        return {
-            categories: [], // Array to track categories and their expanded states
-        }
+    initialCategory: {
+        type: String,
+        default: null,
     },
-    computed: {
-        sortedGlossary() {
+})
+const categories = ref([]);
+
+const  sortedGlossary= computed(() => {
             let grouped = {}
 
-            this.glossary.forEach((item) => {
+            props.glossary.forEach((item) => {
                 let category = item.category || 'Uncategorized'
                 if (!grouped[category]) {
                     grouped[category] = []
@@ -82,75 +77,79 @@ export default {
                         a.word.localeCompare(b.word)
                     )
                 })
-
+                
             return sortedGroups
-        },
-    },
-    mounted() {
-        this.categories = Object.keys(this.sortedGlossary)
-            .sort()
-            .map((category) => {
-                return { category, expanded: false }
-            })
+        })
+// function handleCategoryFromQuery() {
+//     console.log( route.query.category,' route.query.category')
+//             const queryCategory =
+//                 initialCategory || route.query.category
+//             if (queryCategory) {
+//                 const categoryObj = categories.value.find(
+//                     (c) => c.category === queryCategory
+//                 )
+//                 if (categoryObj) {
+//                     categoryObj.expanded = true
 
-        this.handleCategoryFromQuery()
-    },
-    watch: {
-        '$route.query.category': {
-            handler() {
-                // to add a slight delay to ensure the DOM and route updates are complete -nextTick alone wasn't working
-                setTimeout(() => {
-                    this.handleCategoryFromQuery()
-                }, 300) // 300ms
-            },
-            immediate: true,
-        },
-    },
-    methods: {
-        handleCategoryFromQuery() {
-            const queryCategory =
-                this.initialCategory || this.$route.query.category
-            if (queryCategory) {
-                const categoryObj = this.categories.find(
-                    (c) => c.category === queryCategory
-                )
-                if (categoryObj) {
-                    categoryObj.expanded = true
+//                     // Scroll after the DOM has updated
+//                     nextTick(() => {
+//                         setTimeout(() => {
+//                             const categoryHeader =
+//                                 $refs[`category-${queryCategory}`]
+//                             if (categoryHeader && categoryHeader[0]) {
+//                                 categoryHeader[0].scrollIntoView({
+//                                     behavior: 'smooth',
+//                                     block: 'start',
+//                                 })
+//                             }
+//                         }, 100) // Small delay before scrolling
+//                     })
+//                 }
+//             }
+//         }
 
-                    // Scroll after the DOM has updated
-                    this.$nextTick(() => {
-                        setTimeout(() => {
-                            const categoryHeader =
-                                this.$refs[`category-${queryCategory}`]
-                            if (categoryHeader && categoryHeader[0]) {
-                                categoryHeader[0].scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'start',
-                                })
-                            }
-                        }, 100) // Small delay before scrolling
-                    })
-                }
-            }
-        },
-        toggleShowingCategory(category) {
-            const categoryObj = this.categories.find(
+function  toggleShowingCategory(category) {
+            const categoryObj = categories.value.find(
                 (c) => c.category === category
             )
             if (categoryObj) {
                 categoryObj.expanded = !categoryObj.expanded
             }
-        },
-        expandAll() {
-            this.categories.forEach((categoryObj) => {
+        }
+
+function expandAll() {
+        categories.value.forEach((categoryObj) => {
                 categoryObj.expanded = true
             })
-        },
-        collapseAll() {
-            this.categories.forEach((categoryObj) => {
+        }
+
+function collapseAll() {
+        categories.value.forEach((categoryObj) => {
                 categoryObj.expanded = false
             })
-        },
-    },
-}
+        }
+onMounted(()=>{
+        
+       categories.value = Object.keys(sortedGlossary.value)
+            .sort()
+            .map((category) => {
+                return { category, expanded: false }
+            })
+     
+
+        // handleCategoryFromQuery()
+        })
+
+
+// watch(()=>route.query.category,
+//         ()=>{
+//    setTimeout(() => {
+//                     handleCategoryFromQuery()
+//                 }, 300) //
+//         },
+//         {   immediate: true}
+//     )
+    
+
+   
 </script>
